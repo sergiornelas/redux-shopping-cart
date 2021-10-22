@@ -1,35 +1,32 @@
-import { useEffect } from "react";
 import classes from "./CartItem.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { cartActions } from "../../store/cart-state";
+import { cartActions } from "../../store/cart-slice";
 
 const CartItem = (props) => {
   const dispatch = useDispatch();
-  const { title, quantity, total, price } = props.item;
+  const { title, quantity, total, price, id } = props.item;
 
-  const cartItems = useSelector((state) => state.cart);
-
-  const increaseQuantity = (index) => {
-    dispatch(cartActions.addQuantity(index));
+  // const cartItems = useSelector((state) => state.cart);
+  const removeItemHandler = () => {
+    dispatch(cartActions.removeItemFromCart(id));
   };
 
-  const removeQuantity = (index) => {
-    dispatch(cartActions.removeQuantity(index));
+  const addItemHandler = () => {
+    dispatch(
+      cartActions.addItemToCart({
+        id,
+        title,
+        price,
+      })
+    );
   };
-
-  useEffect(() => {
-    if (cartItems[props.id].quantity < 1) {
-      return dispatch(cartActions.removeItem(props.id));
-    }
-  }, [cartItems, dispatch, props.id]);
-
   return (
     <li className={classes.item}>
       <header>
         <h3>{title}</h3>
         <div className={classes.price}>
-          ${total.toFixed(2)}
-          <span className={classes.itemprice}>(${price}/item)</span>
+          ${total}
+          <span className={classes.itemprice}>(${price.toFixed(2)}/item)</span>
         </div>
       </header>
       <div className={classes.details}>
@@ -37,8 +34,8 @@ const CartItem = (props) => {
           x <span>{quantity}</span>
         </div>
         <div className={classes.actions}>
-          <button onClick={() => removeQuantity(props.id)}>-</button>
-          <button onClick={() => increaseQuantity(props.id)}>+</button>
+          <button onClick={removeItemHandler}>-</button>
+          <button onClick={addItemHandler}>+</button>
         </div>
       </div>
     </li>
